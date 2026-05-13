@@ -1,0 +1,54 @@
+{
+  "name": "UniClip",
+  "version": "1.0.0",
+  "description": "UniClip Cross-Device Clipboard Sync",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "keywords": [],
+  "author": "UniClip",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "electron": "^42.0.1"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "socket.io-client": "^4.8.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "./uniclip_icon_electron.ico"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "UniClip",
+            "setupIcon": "./uniclip_icon_electron.ico",
+            "loadingGif": "./loading.gif"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin",
+            "win32"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        }
+      ]
+    }
+  }
+}

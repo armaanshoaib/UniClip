@@ -1,0 +1,27 @@
+
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/build
+/android/app/profile
+/android/app/release
+
+/electron-app/node_modules/
+/electron-app/out/
+/flutter_app/node_modules/
+/flutter_app/build/
+/server/node_modules/
+
+
+#logs related
+/server/logs
+/server/status
+
+features.txt
+
+# nginx related
+/data
+/letsencrypt
+
+#OpenCode related
+AGENTS.md

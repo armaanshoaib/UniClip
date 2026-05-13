@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniClip | Seamless Cross-Device Sync</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary: #00d2d3;
+            --bg: #09071a;
+            --text: #ffffff;
+            --text-dim: #a4b0be;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-hover: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f0c29 50%, var(--bg) 100%);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            width: 100%;
+            /* Explicitly tell it to scale down */
+        }
+
+        /* Navbar */
+        nav {
+            padding: 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 32px;
+            width: 32px;
+            object-fit: contain;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-icon {
+            background-color: transparent;
+            height: 170px;
+            width: 170px;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 10px 20px rgba(108, 92, 231, 0.3));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            background: linear-gradient(to bottom right, #ffffff 40%, #c7c2fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.35rem;
+            color: var(--text-dim);
+            max-width: 650px;
+            margin: 0 auto 48px;
+            font-weight: 400;
+        }
+
+        /* Download Buttons */
+        .download-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 18px 36px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid transparent;
+        }
+
+        .btn-windows {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-windows:hover {
+            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-android {
+            background: var(--glass);
+            color: white;
+            border-color: var(--glass-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .btn-android:hover {
+            background: var(--glass-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0 120px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 48px 40px;
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: var(--glass-hover);
+            border-color: rgba(108, 92, 231, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 16px;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .card p {
+            color: var(--text-dim);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* Visual Blur Blobs */
+        .blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            filter: blur(140px);
+            opacity: 0.15;
+            z-index: -1;
+            border-radius: 50%;
+            pointer-events: none;
+            max-width: 100vw;
+        }
+
+        .blob-1 {
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+        }
+
+        .blob-2 {
+            bottom: 100px;
+            left: 0;
+            /* Changed from -200px to prevent pulling the viewport */
+            background: var(--secondary);
+            opacity: 0.08;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0 40px;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(9, 7, 26, 0.4);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .btn-github {
+            background: var(--glass);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-github:hover {
+            background: #fff;
+            color: var(--bg);
+            transform: translateY(-2px);
+        }
+
+        .footer-text {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .heart {
+            color: #ff4757;
+            display: inline-block;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            cursor: pointer;
+            padding: 18px 36px;
+        }
+
+        .chevron {
+            transition: transform 0.2s;
+        }
+
+        .dropdown:hover .chevron {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .dropdown:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .dropdown-item svg {
+            color: var(--primary-light);
+            flex-shrink: 0;
+        }
+
+        .dropdown-item span {
+            white-space: nowrap;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 480px) {
+            .download-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .dropdown {
+                width: 100%;
+            }
+
+            .dropdown-content {
+                left: 0;
+                right: 0;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container">
+        <!-- Enhanced Navbar -->
+        <nav>
+            <a href="#" class="logo-container">
+                <img src="uniclip_icon_electron.png" alt="UniClip Logo" class="logo-img">
+                <span class="logo">UniClip</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+            </div>
+        </nav>
+
+        <!-- Main Hero -->
+        <section class="hero">
+            <img src="uniclip_icon_electron.png" alt="UniClip Large Icon" class="hero-icon">
+            <h1>Seamless Clipboard Sync</h1>
+            <p>Share text instantly between your Windows PC and Android phone with complete end-to-end privacy</p>
+
+            <div class="download-group" id="downloads">
+                <div class="dropdown">
+                    <button class="btn btn-windows dropdown-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M0 3.449L9.75 2.1V11.4H0V3.449zm0 8.851h9.75v9.3L0 20.25V12.3zm10.75-10.425L24 0v11.4H10.75V1.875zm0 10.425H24V24l-13.25-1.875V12.3z" />
+                        </svg>
+                        Download for Windows
+                        <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="uniclip-setup.exe" class="dropdown-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z" />
+                            </svg>
+                            <span>Installer (.exe)</span>
+                        </a>
+                        <a href="uniclip-setup.msi" class="dropdown-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z" />
+                            </svg>
+                            <span>Installer (.msi)</span>
+                        </a>
+                    </div>
+                </div>
+                <a href="uniclip.apk" class="btn btn-android">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9997.9993-.9997c.5511 0 .9993.4486.9993.9997s-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9997.9993-.9997c.5511 0 .9993.4486.9993.9997s-.4482.9997-.9993.9997m11.4045-6.0206l1.9973-3.4592c.1143-.1978.0163-.4497-.183-.564-.1994-.1144-.452-.0161-.5663.1818l-2.0232 3.5042c-1.442-.658-3.0515-1.0264-4.743-1.0264s-3.301.3684-4.743 1.0264l-2.0232-3.5042c-.1143-.1979-.3668-.2962-.5663-.1818-.1993.1143-.2973.3662-.183.564l1.9973 3.4592c-2.9304 1.7063-4.8967 4.8625-4.8967 8.4901h19.824c0-3.6276-1.9663-6.7838-4.8967-8.4901" />
+                    </svg>
+                    Download for Android
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="features" id="features">
+            <div class="card">
+                <h3>Real-time Sync</h3>
+                <p>Built on Socket.io for sub-millisecond delivery. Copy text on one device, and it's instantly waiting
+                    on your other clipboard.</p>
+            </div>
+            <div class="card">
+                <h3>Native Integration</h3>
+                <p>Android accessibility services and Windows clipboard APIs work seamlessly in the background without
+                    affecting performance.</p>
+            </div>
+            <div class="card">
+                <h3>Private Rooms</h3>
+                <p>Your data stays completely isolated. Create secure, temporary rooms for your connected hardware and
+                    vanish when you disconnect.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Cleaned Footer Layout -->
+    <footer>
+        <div class="container footer-content">
+            <a href="https://github.com/armaanshoaib/uniclip-gemini-2" target="_blank" class="btn-github">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                </svg>
+                View on GitHub
+            </a>
+            <p class="footer-text">Built with <span class="heart">♥</span> for copycats.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>UniClip</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-top: 20px;
+      color: #61dafb;
+    }
+    .container {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input {
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 5px;
+      background-color: #2d2d2d;
+      color: white;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #61dafb;
+      color: #1e1e1e;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #21a1c4;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #error-msg {
+      color: #ff6b6b;
+      font-size: 14px;
+      text-align: center;
+      min-height: 20px;
+    }
+    #room-view {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .room-header {
+      background-color: #2d2d2d;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+    .room-header h2 {
+      margin: 0;
+      color: #4CAF50;
+    }
+    .clipboard-logs {
+      width: 100%;
+      height: 200px;
+      background-color: #2d2d2d;
+      border-radius: 5px;
+      padding: 10px;
+      overflow-y: auto;
+      box-sizing: border-box;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .log-item {
+      border-bottom: 1px solid #444;
+      padding: 5px 0;
+    }
+    .log-item:last-child {
+      border-bottom: none;
+    }
+    #connection-status {
+      font-size: 12px;
+      text-align: center;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-top: 5px;
+    }
+    .status-connected {
+      color: #4CAF50;
+    }
+    .status-disconnected {
+      color: #ff6b6b;
+    }
+    .status-error {
+      color: #f39c12;
+    }
+    .user-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      margin: 4px 0;
+      background-color: #333;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .user-item .user-name {
+      flex: 1;
+    }
+    .user-item .sync-toggle {
+      margin: 0 8px;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px solid #555;
+      background: #2d2d2d;
+      color: #aaa;
+    }
+    .user-item .sync-toggle.active {
+      background: #4CAF50;
+      color: white;
+      border-color: #4CAF50;
+    }
+    .user-item .sync-toggle.inactive {
+      background: #555;
+      color: #999;
+      border-color: #555;
+    }
+    .user-item .remove-btn {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .user-item .remove-btn:hover {
+      background: #e55555;
+    }
+    .creator-badge {
+      color: #f39c12;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+    .header-actions button {
+      flex: 1;
+      font-size: 14px;
+      padding: 8px;
+    }
+    .password-hint {
+      font-size: 12px;
+      color: #aaa;
+      text-align: center;
+      margin-top: -10px;
+    }
+    .password-lock {
+      color: #f39c12;
+    }
+  </style>
+</head>
+<body>
+  <h1>UniClip</h1>
+  <p id="tagline" style="text-align: center; color: #aaa;">Seamless Cross-Device Clipboard Sync</p>
+  <div id="connection-status"></div>
+
+  <div id="settings-menu" style="display: none; width: 100%; max-width: 400px; margin-bottom: 20px;">
+    <div class="room-header">
+      <h3 style="margin-top: 0; color: #61dafb;">Settings</h3>
+      <input type="text" id="setting-server-url" placeholder="Enter Custom Server URL (e.g., http://192.168.1.100:3000)">
+      <p style="margin-top: 0; color: #e72d18; font-size: 14px;">Do not change unless you know what you are doing</p>
+      <button id="btn-save-settings" style="width: 100%; margin-top: 10px;">Save & Reconnect</button>
+      <button id="btn-close-settings" style="width: 100%; margin-top: 10px; background-color: #555; color: white;">Back</button>
+    </div>
+  </div>
+
+  <div class="container" id="main-menu">
+    <button id="btn-show-create">Create Room</button>
+    <button id="btn-show-join">Join Room</button>
+    <button id="btn-show-settings" style="background-color: #555; color: white; margin-top: 10px;">Settings</button>
+  </div>
+
+  <div class="container" id="auth-view" style="display: none;">
+    <h3 id="auth-title" style="text-align: center; margin-top: 0; color: #61dafb;"></h3>
+    <input type="text" id="device-name" placeholder="Device Name (e.g., Windows PC)">
+    <input type="text" id="room-id" placeholder="Room ID (e.g., 1234)">
+    <input type="password" id="room-password" placeholder="Room Password (optional)" style="display: none;">
+    <div id="password-hint" class="password-hint" style="display: none;"></div>
+    <button id="btn-action">Submit</button>
+    <button id="btn-back" style="background-color: #555; color: white;">Back</button>
+    <div id="error-msg"></div>
+  </div>
+
+  <div class="container" id="room-view">
+    <div class="room-header">
+      <h2>Room: <span id="display-room-id"></span></h2>
+      <p>Device: <span id="display-device-name"></span></p>
+      <div id="users-container" style="margin-top: 10px; font-size: 14px;">
+        <div style="margin-bottom: 6px; color: #4CAF50;"><b>Connected Devices:</b></div>
+        <div id="display-users"></div>
+      </div>
+      <button id="btn-toggle-sync" style="background-color: #f39c12; color: white; margin-top: 10px; width: 100%;">Pause Syncing</button>
+    </div>
+
+    <div style="width: 100%; margin-bottom: 15px;">
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="broadcast-text" placeholder="Type a message to broadcast..." style="flex: 1; margin: 0; font-size: 14px;">
+        <button id="btn-broadcast" style="padding: 8px 15px; font-size: 14px;">Send</button>
+      </div>
+    </div>
+
+    <div style="width: 100%; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none;" id="toggle-logs">
+      <h3 style="margin: 0;">Recent Syncs</h3>
+      <span id="logs-arrow" style="font-size: 16px;">▼</span>
+    </div>
+    <div class="clipboard-logs" id="logs"></div>
+
+    <div class="header-actions">
+      <button id="btn-refresh" style="background-color: #555; color: white;">Refresh</button>
+      <button id="btn-leave" style="background-color: #ff6b6b; color: white;">Leave Room</button>
+    </div>
+  </div>
+
+  <script src="./renderer.js"></script>
+</body>
+</html>
