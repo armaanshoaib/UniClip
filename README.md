@@ -2,6 +2,8 @@
 
 UniClip is a real-time, scalable clipboard synchronization solution designed to seamlessly share text across Windows (Electron) and Mobile (Flutter/Android) devices using a central Node.js Socket.io server.
 
+Download Setup Files (.exe/.msi/.apk) from [here](https://uniclip.online)
+
 ## Architecture & Workflow
 
 UniClip utilizes a Hub-and-Spoke architecture:
@@ -27,47 +29,60 @@ UniClip utilizes a Hub-and-Spoke architecture:
 ## Folder Structure
 ```text
 D:\uniclip-gemini-2\
-├── server\                     # Node.js + Socket.io relay server
-│   ├── index.js                # Core server logic, room management, user tracking
+├── electron-app/               # Windows Desktop Client
+│   ├── main.js                 # Main process: system tray, clipboard polling, squirrel startup
+│   ├── renderer.js             # UI logic: room creation, joining, pause/resume sync
+│   ├── index.html              # Dark-mode interface
+│   ├── package.json            # Electron Forge build scripts
+│   └── out/                    # Compiled Windows installers (.exe)
+│
+├── flutter_app/                # Android Mobile Client
+│   ├── lib/main.dart           # Flutter UI, Socket.io client, state management
+│   └── android/app/src/main/   # Native Android Configurations
+│       ├── AndroidManifest.xml # Permissions, intents, cleartext traffic config
+│       └── kotlin/com/uniclip/app/
+│           ├── MainActivity.kt                  # Flutter embedding & method channels
+│           ├── ProcessTextActivity.kt           # Native context menu handler (Share to PC)
+│           └── ClipboardAccessibilityService.kt # Background clipboard listener
+│
+├── server/                     # Node.js + Socket.io Relay Server
+│   ├── index.js                # Core logic, room management, horizontal scaling optimizations
+│   ├── logs/                   # Winston structured logs (error.log, combined.log)
+│   ├── status/                 # stats.json for real-time monitoring via Docker Volumes
 │   └── package.json
-├── electron-app\               # Windows Desktop Client
-│   ├── main.js                 # Electron main process (Background clipboard polling & Sockets)
-│   ├── preload.js              # IPC Bridge (Secure context isolation)
-│   ├── renderer.js             # UI Logic (Create/Join/Pause)
-│   ├── index.html              # Dark Mode UI
-│   └── package.json
-└── flutter_app\                # Android Client
-    ├── lib\
-    │   └── main.dart           # Flutter UI, Socket.io client, state management
-    └── android\app\src\main\
-        ├── AndroidManifest.xml # Permissions, intents, cleartext traffic config
-        └── kotlin\com\example\flutter_app\
-            ├── MainActivity.kt 
-            ├── ProcessTextActivity.kt # Hidden activity for Context Menu sync
-            └── ClipboardAccessibilityService.kt # Native background clipboard listener
+│
+├── website/                    # Public Landing Page
+│   └── index.html              # Vibrant, modern download portal
+│
+├── socket-test.yml             # Artillery load testing configuration (Horizontal scaling)
+└── processor.js                # Artillery processor for generating dynamic user/room data
 ```
 
-## Execution Steps
 
-### 1. Start the Relay Server
+## Execution Steps (Local Development)
+
+### 1. Server
 ```bash
 cd server
+npm install
 npm start
-# Server listens on port 3000
+# Server runs on port 3000
 ```
-
-### 2. Start the Windows App (Electron)
+### 2. Windows Client (Electron)
 ```bash
 cd electron-app
+npm install
 npm start
-# Enter a Room ID and Device Name to Create/Join a room.
+# To build installer: npm run make
 ```
 
-### 3. Start the Android App (Flutter)
-Ensure you have an Android emulator running or a physical device connected via USB with debugging enabled.
+### 3. Android Client (Flutter)
 ```bash
 cd flutter_app
+flutter clean
 flutter run
+# To build release APK: flutter build apk --release
+# To build App Bundle: flutter build appbundle --release
 ```
 
 ### Important Android Setup
