@@ -53,7 +53,7 @@ const roomData = {};  // roomId -> { password, creatorSocketId }
 const syncExclusions = {}; // socketId -> Set of excluded socketIds
 let globalConnectionCount = 0;
 
-// --- Stats Export (for Docker Volumes) ---
+// --- Stats Export ---
 const statsDir = process.env.STATS_DIR || 'status';
 if (!fs.existsSync(statsDir)) {
   fs.mkdirSync(statsDir);
@@ -269,7 +269,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3080;
 server.listen(PORT, '0.0.0.0', () => {
   logger.info(`Relay server running on port ${PORT}`);
 });

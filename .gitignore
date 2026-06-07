@@ -25,3 +25,6 @@ features.txt
 
 #OpenCode related
 AGENTS.md
+
+#website outputs (.apk, .exe, .msi)
+/website/outputs

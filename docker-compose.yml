@@ -1,0 +1,43 @@
+services:
+
+  landingpage:
+    build: ./website
+    image: landingpageimg
+    container_name: landingpage_ctr
+    restart: unless-stopped
+    networks:
+      - uniclip-docker-network
+
+  node-api:
+    build: ./server
+    image: uniclipserverimg:latest
+    container_name: uniclip_node_ctr
+    restart: unless-stopped
+    volumes:
+      - ./server/server_logs:/app/logs
+      - ./server/server_status:/app/status
+    networks:
+      - uniclip-docker-network
+
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: always
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
+    depends_on:
+      - node-api
+    networks:
+      - uniclip-docker-network
+
+networks:
+  uniclip-docker-network:
+
+volumes:
+  npm_data:
+  npm_letsencrypt:
