@@ -28,3 +28,12 @@ AGENTS.md
 
 #website outputs (.apk, .exe, .msi)
 /website/outputs
+
+# Grafana local state (not provisioning)
+grafana/data/
+
+#vscode related
+.vscode
+
+#github related
+.github

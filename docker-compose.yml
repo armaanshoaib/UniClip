@@ -1,5 +1,4 @@
 services:
-
   landingpage:
     build: ./website
     image: landingpageimg
@@ -7,6 +6,12 @@ services:
     restart: unless-stopped
     networks:
       - uniclip-docker-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   node-api:
     build: ./server
@@ -18,9 +23,23 @@ services:
       - ./server/server_status:/app/status
     networks:
       - uniclip-docker-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
 
   nginx-proxy-manager:
-    image: jc21/nginx-proxy-manager:latest
+    image: jc21/nginx-proxy-manager:2.11.2
     container_name: nginx-proxy-manager
     restart: always
     ports:
@@ -34,10 +53,58 @@ services:
       - node-api
     networks:
       - uniclip-docker-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  prom-server:
+    image: prom/prometheus:v3.0.0
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    container_name: prom_ctr
+    networks:
+      - uniclip-docker-network
+    volumes:
+      - ./server/prometheus/prometheus-config.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  grafana:
+    image: grafana/grafana:11.6
+    container_name: graf_ctr
+    restart: unless-stopped
+    ports:
+       - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      prom-server:
+        condition: service_started
+    networks:
+      - uniclip-docker-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
 networks:
   uniclip-docker-network:
+    driver: bridge
 
 volumes:
   npm_data:
   npm_letsencrypt:
+    external: true
+  grafana_data:
+  prometheus_data:

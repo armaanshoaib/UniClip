@@ -4,13 +4,19 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const winston = require('winston');
 const fs = require('fs');
+const client = require('prom-client');
 const path = require('path');
+const { cli } = require('winston/lib/winston/config');
 
 // --- Logger Configuration ---
 const logDir = process.env.LOG_DIR || 'logs';
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
+
+const collectDefaultMetrics = client.collectDefaultMetrics;
+
+collectDefaultMetrics({register: client.register})
 
 const logger = winston.createLogger({
   level: 'info',
@@ -108,6 +114,12 @@ app.get('/stats', (req, res) => {
       userCount: roomUsers[id] ? Object.keys(roomUsers[id]).length : 0
     }))
   });
+});
+
+app.get('/metrics',async (req,res) => {
+  res.setHeader('Content-Type', client.register.contentType)
+  const metrics = await client.register.metrics();
+  res.send(metrics);
 });
 
 app.post('/broadcast', (req, res) => {
