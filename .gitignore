@@ -37,3 +37,6 @@ grafana/data/
 
 #github related
 .github
+
+#prometheus related
+prom.md

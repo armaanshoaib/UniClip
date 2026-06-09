@@ -6,12 +6,6 @@ services:
     restart: unless-stopped
     networks:
       - uniclip-docker-network
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
   node-api:
     build: ./server
@@ -24,7 +18,7 @@ services:
     networks:
       - uniclip-docker-network
     healthcheck:
-      test: ["CMD", "wget", "--spider", "http://localhost:3080/health"]
+      test: ["CMD", "wget", "--spider", "http://127.0.0.1:3080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -39,7 +33,7 @@ services:
           memory: 128M
 
   nginx-proxy-manager:
-    image: jc21/nginx-proxy-manager:2.11.2
+    image: jc21/nginx-proxy-manager:2.15.1
     container_name: nginx-proxy-manager
     restart: always
     ports:
@@ -60,7 +54,7 @@ services:
           memory: 256M
 
   prom-server:
-    image: prom/prometheus:v3.0.0
+    image: prom/prometheus:v3.12.0
     restart: unless-stopped
     ports:
       - "9090:9090"
