@@ -54,8 +54,6 @@ D:\uniclip-gemini-2\
 ├── website/                    # Public Landing Page
 │   └── index.html              # Vibrant, modern download portal
 │
-├── socket-test.yml             # Artillery load testing configuration (Horizontal scaling)
-└── processor.js                # Artillery processor for generating dynamic user/room data
 ```
 
 
